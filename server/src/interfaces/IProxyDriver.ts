@@ -4,5 +4,5 @@ export interface IProxyDriver {
      * @param url The URL to fetch.
      * @returns The HTML content of the page with rewritten paths.
      */
-    fetch(url: string): Promise<string>;
+    fetch(url: string, injectionScript?: string): Promise<string>;
 }

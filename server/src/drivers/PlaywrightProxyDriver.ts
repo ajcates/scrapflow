@@ -5,7 +5,7 @@ import { Browser, Page } from 'playwright-core';
 
 export class PlaywrightProxyDriver implements IProxyDriver {
 
-    async fetch(url: string): Promise<string> {
+    async fetch(url: string, injectionScript?: string): Promise<string> {
         const browser: Browser = await launchBrowser();
         try {
             // Emulate a mobile device
@@ -45,6 +45,10 @@ export class PlaywrightProxyDriver implements IProxyDriver {
 
             // TODO: Rewrite CSS url() values if needed, but that requires parsing CSS.
             // For now, we handle the main HTML elements.
+
+            if (injectionScript) {
+                $('body').append(`<script>${injectionScript}</script>`);
+            }
 
             return $.html();
         } finally {
