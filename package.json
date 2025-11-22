@@ -1,0 +1,13 @@
+{
+  "name": "scrapflow",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "test": "npm test --workspaces",
+    "dev": "npm run dev --workspaces"
+  }
+}
