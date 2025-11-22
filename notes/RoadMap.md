@@ -3,78 +3,79 @@
 ## Project Overview
 A general-purpose mobile web scraper application. The user defines scraping rules interactively by selecting elements on a webpage loaded within a proxy frame. The backend then executes these rules using Playwright.
 
+### Methodology: Agile & TDD
+This project follows a strict **Test Driven Development (TDD)** cycle (Red-Green-Refactor) and Agile principles.
+- **Testing Framework**: `node-tap` for unit and integration tests.
+- **E2E/Browser Testing**: `playwright-termux` for testing scraping logic and rendering.
+- **Process**: Write a failing test -> Implement minimal code to pass -> Refactor.
+
 ### Tech Stack
 - **Frontend**: Vue.js (TypeScript)
 - **Backend**: Express.js (TypeScript)
-- **Scraping Engine**: Playwright
+- **Scraping Engine**: Playwright (via `playwright-termux`)
+- **Testing**: `node-tap` (Unit/Integration), `playwright-termux` (Browser Control)
 - **Styling**: Material 3 Expressive (using Web Components or similar), Custom CSS (No Tailwind).
 - **Architecture**: Monorepo (`client/`, `server/`).
 - **Data Storage**: Flat JSON files.
 
 ---
 
-## Phase 1: Project Initialization & Architecture
+## Phase 1: Project Initialization & Test Infrastructure
 - [ ] **Monorepo Setup**
-    - Initialize `package.json` in root.
-    - Set up workspaces for `client` and `server`.
-    - Configure TypeScript (`tsconfig.json`) for both packages.
-- [ ] **Backend Boilerplate**
-    - Setup Express server with TypeScript.
-    - Implement basic error handling and logging.
-- [ ] **Frontend Boilerplate**
-    - Setup Vue.js 3 project with TypeScript.
-    - Configure Material 3 UI library integration.
-    - Setup global CSS file structure (separation of concerns).
+    - Initialize `package.json` workspaces (`client`, `server`).
+    - Configure TypeScript (`tsconfig.json`) for strict typing.
+- [ ] **Test Harness Setup**
+    - Install and configure `node-tap` in both workspaces.
+    - Set up `playwright-termux` for backend browser testing.
+    - **TDD**: Write a simple "Hello World" test for both server and client to verify the harness.
 
-## Phase 2: The Proxy "Driver" System
-- [ ] **Proxy Architecture**
-    - Design a `ProxyDriver` interface/adapter pattern.
-    - Ensure the system allows easy swapping of proxy implementations.
+## Phase 2: The Proxy "Driver" System (TDD)
+- [ ] **Proxy Driver Interface**
+    - **Red**: Write a test defining the expected API for a `ProxyDriver` (fetching, rewriting).
+    - **Green**: Define the TypeScript interfaces.
 - [ ] **Default Proxy Implementation**
-    - Build a custom proxy capable of fetching a URL.
-    - Implement HTML parsing and path rewriting (for CSS, JS, Images, and Links) so the target site loads correctly in the frontend iframe without CORS issues.
-    - Ensure the proxy emulates a **Mobile User Agent**.
+    - **Red**: Write tests for the default proxy:
+        - Should fetch a URL.
+        - Should rewrite relative paths (CSS, JS, Images) to absolute/proxied paths.
+        - Should emulate a Mobile User Agent.
+    - **Green**: Implement the HTTP fetching and HTML parsing/rewriting logic.
+    - **Refactor**: Ensure code is loosely coupled and highly cohesive.
 
-## Phase 3: Frontend Core & Interactivity (The Builder)
-- [ ] **App Shell**
-    - Implement the "Material 3 Expressive" layout.
-    - Main Toolbar (Top) and Viewport Iframe.
-- [ ] **DOM Interaction**
-    - Implement logic to detect clicks/hovers inside the iframe (via the proxy's rewritten content or postMessage communication).
-    - **"Select Items" Mode**:
-        - Highlight selected `div`.
-        - Auto-detect and highlight sibling elements with badges/numbers.
-- [ ] **"Foreach" Mode & Configuration**
-    - Implement the secondary "Foreach" Toolbar (Bottom).
-    - **Add Property**: Select sub-elements, name them (Popup dialog), highlight matching sub-elements in siblings.
-    - **Add Link**: Select links, handle navigation to the new link within the iframe (recursive configuration).
-    - **Add Image**: Select image elements.
-- [ ] **Pagination Logic**
-    - "Select Next" button implementation.
-    - Logic to identify and highlight the "Next Page" link.
+## Phase 3: Frontend Core (The Builder) - Agile Iterations
+- [ ] **App Shell & State**
+    - **Red**: Write component tests for the Main Toolbar and Viewport layout.
+    - **Green**: Implement Material 3 Expressive layout.
+- [ ] **DOM Interaction Logic**
+    - **Red**: Write unit tests for the element selection logic (given an HTML structure, selecting X should highlight Y).
+    - **Green**: Implement the "Select Items" mode (highlighting `divs`, badging siblings).
+- [ ] **"Foreach" Mode**
+    - **Red**: Write tests for adding properties to the scraping state.
+    - **Green**: Implement the secondary "Foreach" Toolbar (Add Property, Add Link, Add Image).
+    - **Refactor**: extract complex logic into composed functions/composables.
 
-## Phase 4: The Scraping Engine (Backend)
-- [ ] **Scraper Service**
-    - Integrate `playwright` (referencing `playwright-termux` context if applicable).
-    - Create a flexible `Scraper` class that accepts the JSON configuration generated by the frontend.
+## Phase 4: The Scraping Engine (Backend) - TDD with Playwright
+- [ ] **Scraper Service Definition**
+    - **Red**: Write a test using `playwright-termux` mock/stub to verify the `Scraper` class structure.
+    - **Green**: Create the `Scraper` class and `scrape()` method signature.
 - [ ] **Execution Logic**
-    - Implement the scraping loop:
-        1. Navigate to URL (Mobile User Agent).
-        2. Wait for selectors.
-        3. Extract "Foreach" items.
-        4. Handle recursive link scraping (deep dive).
-        5. Handle Pagination (click next, wait, repeat).
-- [ ] **Data Persistence**
-    - Implement file system logic to save results as flat JSON files.
-    - Save the "Scraping Definition" (rules) separately for re-runs.
+    - **Red**: Create a test site (local HTML) and write a test that asserts the scraper extracts specific data from it using a JSON definition.
+    - **Green**: Implement the `playwright-termux` logic:
+        - Navigate (Mobile UA).
+        - Select and Extract "Foreach" items.
+        - Handle Pagination (click next, wait).
+    - **Refactor**: Optimize for performance and reliability.
+- [ ] **Recursive Scraping**
+    - **Red**: Write a test for deep scraping (following links).
+    - **Green**: Implement the recursive crawling logic.
 
-## Phase 5: Review & Refinement
+## Phase 5: Data Persistence & Polish
+- [ ] **Persistence Layer**
+    - **Red**: Write tests for saving and retrieving JSON results and definitions.
+    - **Green**: Implement flat file storage logic.
 - [ ] **Results Viewer**
-    - Frontend page to view saved JSON files.
-    - Implement filtering logic (contains/does not contain).
-- [ ] **Re-running Jobs**
-    - UI to load an existing scraping definition and restart the job (Append or Replace mode).
-- [ ] **Polishing**
-    - Ensure "Code is highly cohesive and loosely coupled".
-    - Add comprehensive comments explaining "what and why".
-    - Verify Mobile-First responsiveness.
+    - **Red**: Write tests for the filtering logic (contains/does not contain).
+    - **Green**: Build the frontend Results Viewer.
+- [ ] **Final Polish**
+    - Run all `node-tap` tests.
+    - Ensure full test coverage.
+    - Verify comments and "what/why" documentation.
