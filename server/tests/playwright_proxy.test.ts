@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import t from 'tap';
 import { PlaywrightProxyDriver } from '../src/drivers/PlaywrightProxyDriver.js';
 import express from 'express';

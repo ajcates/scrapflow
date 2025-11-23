@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import t from 'tap';
 import express from 'express';
 import http from 'http';

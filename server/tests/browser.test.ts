@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import t from 'tap';
 import { launchBrowser } from '../src/browser.js';
 import { chromium } from 'playwright-core';

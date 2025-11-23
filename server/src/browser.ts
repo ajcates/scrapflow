@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { chromium, Browser } from 'playwright-core';
 
 export async function launchBrowser(): Promise<Browser> {

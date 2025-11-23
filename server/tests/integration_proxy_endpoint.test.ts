@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import t from 'tap';
 import { app } from '../src/index.js';
 import http from 'http';
