@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-// Import Material Web components (we will verify these are installed and imported correctly in main.ts if needed)
-// But usually they are custom elements.
+import '@material/web/button/filled-button.js';
+import '@material/web/textfield/outlined-text-field.js';
 
 const iframeSrc = ref('');
 const inputUrl = ref('https://example.com');
@@ -23,6 +23,12 @@ const handleMessage = (event: MessageEvent) => {
   }
 };
 
+// Update inputUrl when the text field changes
+const updateUrl = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  inputUrl.value = target.value;
+}
+
 onMounted(() => {
   window.addEventListener('message', handleMessage);
 });
@@ -36,9 +42,16 @@ onUnmounted(() => {
   <div class="app-container">
     <!-- Top Bar -->
     <header class="top-bar">
-      <h1>ScrapFlow</h1>
+      <h1 class="title">ScrapFlow</h1>
       <div class="url-input">
-        <input v-model="inputUrl" type="text" placeholder="https://example.com" @keyup.enter="startScraping" />
+        <md-outlined-text-field
+          :value="inputUrl"
+          @input="updateUrl"
+          @keyup.enter="startScraping"
+          label="Target URL"
+          type="url"
+          class="url-field"
+        ></md-outlined-text-field>
         <md-filled-button @click="startScraping">Go</md-filled-button>
       </div>
     </header>
@@ -77,23 +90,37 @@ onUnmounted(() => {
   flex-direction: column;
   height: 100vh;
   width: 100vw;
-  background-color: #f0f0f0;
+  background-color: #f0f4f8; /* Light surface color */
   color: #1e1e1e;
+  font-family: 'Roboto', sans-serif;
 }
 
 .top-bar {
-  padding: 1rem;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 64px;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #1e1e1e;
+  margin: 0;
 }
 
 .url-input {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
+}
+
+.url-field {
+  min-width: 300px;
 }
 
 .viewport {
@@ -102,24 +129,43 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  padding: 20px;
+  padding: 24px;
+  background-color: #f0f4f8;
 }
 
 .phone-frame {
   width: 375px;
   height: 812px;
-  border: 16px solid #333;
-  border-radius: 36px;
+  border: 12px solid #1f1f1f;
+  border-radius: 48px;
   background: white;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.25);
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Notch simulation */
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 24px;
+  background: #1f1f1f;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  z-index: 20;
 }
 
 .proxy-frame {
   width: 100%;
   height: 100%;
   border: none;
+  flex: 1;
 }
 
 .placeholder {
@@ -127,12 +173,23 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: #666;
+  color: #757575;
+  font-size: 0.9rem;
 }
 
 .bottom-bar {
-  padding: 1rem;
-  background: white;
-  border-top: 1px solid #ddd;
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  min-height: 80px;
+}
+
+.path {
+  font-family: monospace;
+  background: #eee;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  word-break: break-all;
 }
 </style>

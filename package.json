@@ -9,5 +9,8 @@
   "scripts": {
     "test": "npm test --workspaces",
     "dev": "npm run dev --workspaces"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.1"
   }
 }
