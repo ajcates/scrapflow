@@ -49,7 +49,9 @@ cd server && npm test
 
 **Frameworks**:
 - Server: `node-tap` (TAP protocol, built-in assertions)
+  - Configuration: `.taprc` in server directory allows incomplete coverage
 - Client: `Vitest` with `@vue/test-utils` and `happy-dom`
+  - Configured to treat `md-*` elements as custom elements (Material Web Components)
 
 **Test Organization**:
 - Unit tests: Individual class/function behavior
@@ -177,6 +179,29 @@ Reference `notes/RoadMap.md` for detailed phase specifications and `notes/prompt
 - **TDD required**: Write tests before implementation
 - **Type safety**: Strict TypeScript, no `any` types without justification
 - **Error handling**: All async operations must handle errors, close browser instances in `finally` blocks
+
+## Test Configuration
+
+### Server (node-tap)
+The `.taprc` file in `server/` directory contains:
+```yaml
+disable-coverage: false
+allow-incomplete-coverage: true
+```
+This allows tests to pass even if coverage isn't 100%, which is necessary because some code paths (like error handling) are difficult to test.
+
+### Client (Vitest)
+The `vite.config.ts` configures Material Web Components as custom elements:
+```typescript
+vue({
+  template: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith('md-')
+    }
+  }
+})
+```
+This prevents Vue warnings about unresolved components during tests.
 
 ## Common Development Patterns
 

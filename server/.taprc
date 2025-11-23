@@ -1,0 +1,2 @@
+disable-coverage: false
+allow-incomplete-coverage: true
